@@ -28,14 +28,56 @@ fn install_homebrew() {
     }
 }
 
-fn install_fzf() {
-    println!("Step 2. FuzzyFinder");
-    println!("Checking if FuzzyFinder is installed...");
+fn install_git() {
+    println!("Step 2. Git");
+    println!("Checking if Git is installed...");
+
+    let git_check_output = Command::new("git")
+        .arg("-v")
+        .output()
+        .expect("Failed to check if Git is installed.");
+
+    if !git_check_output.status.success() {
+        println!("Git is not installed. Installing...");
+
+        let install_output = Command::new("brew install git")
+            .output()
+            .expect("Failed to install Git.");
+
+        if install_output.status.success() {
+            println!("Git installed successfully.");
+        } else {
+            println!("Failed to install Git.");
+        }
+    } else {
+        println!("Git is already installed.");
+    }
 }
 
 fn install_iterm() {
     println!("Step 3. Iterm");
-    println!("Checking if Iterm is installed...");
+    println!("Checking Iterm I is installed...");
+
+    let git_check_output = Command::new("git")
+        .arg("-v")
+        .output()
+        .expect("Failed to check if Git is installed.");
+
+    if !git_check_output.status.success() {
+        println!("Git is not installed. Installing...");
+
+        let install_output = Command::new("brew install git")
+            .output()
+            .expect("Failed to install Git.");
+
+        if install_output.status.success() {
+            println!("Git installed successfully.");
+        } else {
+            println!("Failed to install Git.");
+        }
+    } else {
+        println!("Git is already installed.");
+    }
 }
 
 fn install_tmux() {
@@ -63,8 +105,13 @@ fn install_powerlevel10k() {
     println!("Checking if Powerlevel10k is installed...");
 }
 
+fn install_fzf() {
+    println!("Step 9. FuzzyFinder");
+    println!("Checking if FuzzyFinder is installed...");
+}
+
 fn install_neovim() {
-    println!("Step 9. Neovim");
+    println!("Step 10. Neovim");
     println!("Checking if Neovim is installed...");
 }
 
