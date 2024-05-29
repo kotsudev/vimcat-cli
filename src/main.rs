@@ -1,7 +1,7 @@
 use std::io;
+use std::path::Path;
 use std::process::Command;
 use std::process::Stdio;
-use std::path::Path;
 
 fn download_configs() -> Result<(), std::io::Error> {
     println!("Downloading configs");
@@ -30,10 +30,10 @@ fn download_configs() -> Result<(), std::io::Error> {
             std::io::ErrorKind::Other,
             "Failed to clone repository",
         ))
-    }   
+    }
 }
 
-fn cleanup_configs()  -> Result<(), std::io::Error> {
+fn cleanup_configs() -> Result<(), std::io::Error> {
     let src_directory = format!("{}/workspace-configs", std::env::var("HOME").unwrap());
 
     // Remove the destination directory
@@ -202,9 +202,15 @@ fn copy(src: &str, dest: &str, file: &str) -> io::Result<()> {
 
 fn setup_iterm() {
     println!("Step 4. Setup Iterm");
-    
-    let src_directory = format!("{}/workspace-configs/iterm2", std::env::var("HOME").unwrap());
-    let dest_directory = format!("{}/Library/Application Support/iTerm2/DynamicProfiles", std::env::var("HOME").unwrap());
+
+    let src_directory = format!(
+        "{}/workspace-configs/iterm2",
+        std::env::var("HOME").unwrap()
+    );
+    let dest_directory = format!(
+        "{}/Library/Application Support/iTerm2/DynamicProfiles",
+        std::env::var("HOME").unwrap()
+    );
 
     match copy(&src_directory, &dest_directory, "main_profile.json") {
         Ok(_) => println!("File copied successfully."),
@@ -245,13 +251,18 @@ fn setup_tmux() {
 
     // Run the git clone command
     let tpm_check_output = Command::new("git")
-        .args(["clone", "https://github.com/tmux-plugins/tpm", &format!("{}/.tmux/plugins/tpm", std::env::var("HOME").unwrap())])
-        .output().expect("Failed");
+        .args([
+            "clone",
+            "https://github.com/tmux-plugins/tpm",
+            &format!("{}/.tmux/plugins/tpm", std::env::var("HOME").unwrap()),
+        ])
+        .output()
+        .expect("Failed");
 
     if tpm_check_output.status.success() {
         println!("Repository cloned successfully");
     }
-    
+
     let src_directory = format!("{}/workspace-configs/tmux", std::env::var("HOME").unwrap());
     let dest_directory = format!("{}/", std::env::var("HOME").unwrap());
 
@@ -287,25 +298,27 @@ fn install_ohmyzsh() {
     }
 }
 
-// TODO fix plugin 'zsh-syntax-highlighting' & 'zsh-autosuggestions' not found message.
 // TODO move setup logic into separate function.
 fn install_zshsyntax() {
     println!("Step 7. ZshSyntaxHighlighting");
     println!("Checking if ZshSyntaxHighlighting is installed...");
 
     let install_output = Command::new("brew")
-            .arg("install")
-            .arg("zsh-syntax-highlighting")
-            .output()
-            .expect("Failed to install Zsh syntax highlighting.");
+        .arg("install")
+        .arg("zsh-syntax-highlighting")
+        .output()
+        .expect("Failed to install Zsh syntax highlighting.");
 
-        if install_output.status.success() {
-            println!("Zsh syntax highlighting installed successfully.");
-        } else {
-            println!("Failed to install Zsh syntax highlighting.");
-        }
+    if install_output.status.success() {
+        println!("Zsh syntax highlighting installed successfully.");
+    } else {
+        println!("Failed to install Zsh syntax highlighting.");
+    }
 
-    let src_directory = format!("{}/workspace-configs/zsh-syntax-highlighting", std::env::var("HOME").unwrap());
+    let src_directory = format!(
+        "{}/workspace-configs/zsh-syntax-highlighting",
+        std::env::var("HOME").unwrap()
+    );
     let dest_directory = format!("{}/.zsh/", std::env::var("HOME").unwrap());
 
     // Ensure destination directory exists
@@ -315,9 +328,30 @@ fn install_zshsyntax() {
         std::fs::create_dir(&dest_directory);
     }
 
-    match copy(&src_directory, &dest_directory, "catppuccin_mocha-zsh-syntax-highlighting.zsh") {
+    match copy(
+        &src_directory,
+        &dest_directory,
+        "catppuccin_mocha-zsh-syntax-highlighting.zsh",
+    ) {
         Ok(_) => println!("Zsh theme setup finished successfully."),
         Err(e) => eprintln!("Error: {}", e),
+    }
+}
+
+fn install_zshautosuggestions() {
+    println!("Step 7. ZshAutoSuggestions");
+    println!("Checking if ZshAutoSuggestions is installed...");
+
+    let install_output = Command::new("brew")
+        .arg("install")
+        .arg("zsh-autosuggestions")
+        .output()
+        .expect("Failed to install Zsh auto suggestions");
+
+    if install_output.status.success() {
+        println!("Zsh auto suggestions installed successfully.");
+    } else {
+        println!("Failed to install Zsh auto suggestions");
     }
 }
 
@@ -328,14 +362,26 @@ fn install_powerlevel10k() {
     println!("Checking if Powerlevel10k is installed...");
 
     let powerlevel10k_check_output = Command::new("git")
-        .args(["clone", "--depth=1", "https://github.com/romkatv/powerlevel10k.git", &format!("{}/.oh-my-zsh/custom/themes/powerlevel10k", std::env::var("HOME").unwrap())])
-        .output().expect("Failed installing powerlevel10k");
+        .args([
+            "clone",
+            "--depth=1",
+            "https://github.com/romkatv/powerlevel10k.git",
+            &format!(
+                "{}/.oh-my-zsh/custom/themes/powerlevel10k",
+                std::env::var("HOME").unwrap()
+            ),
+        ])
+        .output()
+        .expect("Failed installing powerlevel10k");
 
     if powerlevel10k_check_output.status.success() {
         println!("Powerlevel10k installed successfully");
     }
 
-    let src_directory = format!("{}/workspace-configs/powerlevel10k", std::env::var("HOME").unwrap());
+    let src_directory = format!(
+        "{}/workspace-configs/powerlevel10k",
+        std::env::var("HOME").unwrap()
+    );
     let dest_directory = format!("{}/", std::env::var("HOME").unwrap());
 
     match copy(&src_directory, &dest_directory, ".p10k.zsh") {
@@ -343,7 +389,6 @@ fn install_powerlevel10k() {
         Err(e) => eprintln!("Error: {}", e),
     }
 }
-
 
 fn install_fzf() {
     println!("Step 9. FuzzyFinder");
@@ -385,8 +430,9 @@ fn install_neovim() {
 
     if !neovim_check_output.status.success() {
         let neovim_check_output = Command::new("brew")
-        .args(["install", "neovim"])
-        .output().expect("Failed installing neovim");
+            .args(["install", "neovim"])
+            .output()
+            .expect("Failed installing neovim");
 
         if neovim_check_output.status.success() {
             println!("Vimcat installed successfully");
@@ -396,8 +442,13 @@ fn install_neovim() {
     }
 
     let vimcat_check_output = Command::new("git")
-        .args(["clone", "https://github.com/kotsudev/vimcat", &format!("{}/.config/nvim", std::env::var("HOME").unwrap())])
-        .output().expect("Failed installing vimcat");
+        .args([
+            "clone",
+            "https://github.com/kotsudev/vimcat",
+            &format!("{}/.config/nvim", std::env::var("HOME").unwrap()),
+        ])
+        .output()
+        .expect("Failed installing vimcat");
 
     if vimcat_check_output.status.success() {
         println!("Vimcat installed successfully");
@@ -427,5 +478,6 @@ fn main() {
     // install_powerlevel10k();
     // install_tmux();
     // setup_tmux();
-    install_neovim();
+    // install_neovim();
+    install_zshautosuggestions();
 }
