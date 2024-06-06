@@ -35,10 +35,7 @@ pub fn cleanup_configs() -> Result<String, std::io::Error> {
     println!("step #. cleanup configs");
 
     if !dest_path.exists() {
-        return Err(std::io::Error::new(
-            std::io::ErrorKind::Other,
-            "destination directory does not exist",
-        ));
+        return Ok("there is no available configs for cleanup, skipping...".to_string());
     }
 
     std::fs::remove_dir_all(dest_path)?;

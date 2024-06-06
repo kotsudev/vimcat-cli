@@ -28,6 +28,7 @@ fn main() {
         setup_powerlevel10k,
         install_neovim,
         setup_neovim,
+        cleanup_configs,
     ];
 
     for step_fn in steps {
