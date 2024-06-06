@@ -1,5 +1,4 @@
 mod installer;
-mod keys;
 mod utils;
 
 use installer::*;
@@ -18,6 +17,7 @@ fn main() {
         install_iterm,
         setup_iterm,
         install_tmux,
+        install_tpm,
         setup_tmux,
         install_ohmyzsh,
         setup_ohmyzsh,
@@ -28,9 +28,12 @@ fn main() {
         setup_powerlevel10k,
         install_neovim,
         setup_neovim,
+        cleanup_configs,
     ];
 
     for step_fn in steps {
         run_step(*step_fn);
     }
+
+    println!("vimcat has been installed successfully.");
 }

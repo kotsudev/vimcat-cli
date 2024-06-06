@@ -39,6 +39,6 @@ pub fn copy(src: &str, dest: &str, file: &str) -> io::Result<CopyResult> {
 pub fn run_step(step_fn: fn() -> Result<String, std::io::Error>) {
     match step_fn() {
         Ok(r) => println!("Success: {}", r),
-        Err(e) => eprintln!("Error: {}", e),
+        Err(e) => panic!("Error: {}", e),
     }
 }
