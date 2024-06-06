@@ -1,31 +1,36 @@
 mod installer;
+mod keys;
 mod utils;
 
 use installer::*;
+use utils::*;
 
 fn main() {
     println!("Welcome to vimcat cli tool");
 
-    // match cleanup_configs() {
-    //     Ok(_) => println!("Cleanup successful"),
-    //     Err(e) => eprintln!("Error cleaning up repository: {}", e)
-    // };
+    let steps: &[fn() -> Result<String, std::io::Error>] = &[
+        cleanup_configs,
+        download_configs,
+        install_homebrew,
+        install_git,
+        install_fzf,
+        install_nerdfonts,
+        install_iterm,
+        setup_iterm,
+        install_tmux,
+        setup_tmux,
+        install_ohmyzsh,
+        setup_ohmyzsh,
+        install_zshsyntax,
+        setup_zshsyntax,
+        install_zshautosuggestions,
+        install_powerlevel10k,
+        setup_powerlevel10k,
+        install_neovim,
+        setup_neovim,
+    ];
 
-    // match download_configs() {
-    //     Ok(_) => println!("Clone successful"),
-    //     Err(e) => eprintln!("Error cloning repository: {}", e),
-    // };
-
-    // install_homebrew();
-    // install_git();
-    // install_nerdfonts();
-    // install_iterm();
-    // setup_iterm();
-    // install_ohmyzsh();
-    // install_zshsyntax();
-    // install_powerlevel10k();
-    // install_tmux();
-    // setup_tmux();
-    // install_neovim();
-    install_zshautosuggestions();
+    for step_fn in steps {
+        run_step(*step_fn);
+    }
 }
