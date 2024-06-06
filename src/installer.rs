@@ -44,14 +44,13 @@ pub fn cleanup_configs() -> Result<String, std::io::Error> {
 
 pub fn install_homebrew() -> Result<String, std::io::Error> {
     let check_output = Command::new("brew").arg("--version").output()?;
-    println!("Step 1. Homebrew");
-    println!("Checking if Homebrew is installed...");
+    println!("step #. install homebrew");
 
     if check_output.status.success() {
         return Ok("homebrew is already installed".to_string());
     }
 
-    println!("Homebrew is not installed. Installing...");
+    println!("homebrew is not installed. installing...");
     let install_output = Command::new("/bin/bash")
         .arg("-c")
         .arg(r#"$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"#)
@@ -68,8 +67,7 @@ pub fn install_homebrew() -> Result<String, std::io::Error> {
 }
 
 pub fn install_git() -> Result<String, std::io::Error> {
-    println!("Step 2. Git");
-    println!("Checking if Git is installed...");
+    println!("step #. install git");
 
     let check_output = Command::new("git").arg("-v").output()?;
 
@@ -77,7 +75,7 @@ pub fn install_git() -> Result<String, std::io::Error> {
         return Ok("git is already installed".to_string());
     }
 
-    println!("Git is not installed. Installing...");
+    println!("git is not installed. installing...");
     let install_output = Command::new("brew").arg("install").arg("git").output()?;
 
     if !install_output.status.success() {
@@ -91,8 +89,7 @@ pub fn install_git() -> Result<String, std::io::Error> {
 }
 
 pub fn install_nerdfonts() -> Result<String, std::io::Error> {
-    println!("Step 5. NerdFonts");
-    println!("Checking if NerdFonts is installed...");
+    println!("step #. install nerdfonts");
 
     let fc_list_output = Command::new("fc-list").stdout(Stdio::piped()).spawn()?;
 
@@ -134,9 +131,7 @@ pub fn install_nerdfonts() -> Result<String, std::io::Error> {
 }
 
 pub fn install_iterm() -> Result<String, std::io::Error> {
-    println!("Step 3. Iterm");
-    println!("Checking Iterm is installed...");
-
+    println!("step #. install iterm");
     let check_output = Command::new("ls").arg("/Applications/iTerm.app").output()?;
 
     if check_output.status.success() {
@@ -161,7 +156,7 @@ pub fn install_iterm() -> Result<String, std::io::Error> {
 }
 
 pub fn setup_iterm() -> Result<String, std::io::Error> {
-    println!("Step 4. Setup Iterm");
+    println!("step #. setup iterm");
 
     let src_directory = format!(
         "{}/workspace-configs/iterm2",
@@ -185,8 +180,7 @@ pub fn setup_iterm() -> Result<String, std::io::Error> {
 }
 
 pub fn install_tmux() -> Result<String, std::io::Error> {
-    println!("Step 4. Tmux");
-    println!("Checking if Tmux is installed...");
+    println!("step #. install tmux");
 
     let check_output = Command::new("tmux").arg("-V").output()?;
 
@@ -230,12 +224,18 @@ pub fn install_tpm() -> Result<String, std::io::Error> {
         ])
         .output()?;
 
-    if !check_output.status.success() {
+    if !install_output.status.success() {
         return Err(std::io::Error::new(
             std::io::ErrorKind::Other,
-            "failed to install tmux tpm",
+            "failed to install tpm",
         ));
     }
+
+    Ok("tpm installed successfully".to_string())
+}
+
+pub fn setup_tmux() -> Result<String, std::io::Error> {
+    println!("step #. setup tmux");
 
     let src_directory = format!("{}/workspace-configs/tmux", std::env::var("HOME").unwrap());
     let dest_directory = format!("{}/", std::env::var("HOME").unwrap());
@@ -252,10 +252,8 @@ pub fn install_tpm() -> Result<String, std::io::Error> {
     Ok("to finish the installation open tmux inside iterm and press prefix + I, this will install all configured plugins".to_string())
 }
 
-// TODO install it at the beginning of the script.
 pub fn install_ohmyzsh() -> Result<String, std::io::Error> {
-    println!("Step 6. OhMyZsh");
-    println!("Checking if OhMyZsh is installed...");
+    println!("step #. install ohmyzsh");
 
     let check_output = Command::new("ls")
         .arg(format!("{}/.oh-my-zsh", std::env::var("HOME").unwrap()))
@@ -281,6 +279,7 @@ pub fn install_ohmyzsh() -> Result<String, std::io::Error> {
 }
 
 pub fn setup_ohmyzsh() -> Result<String, std::io::Error> {
+    println!("step #. setup ohmyzsh");
     let src_directory = format!("{}/workspace-configs/zsh", std::env::var("HOME").unwrap());
     let dest_directory = format!("{}/", std::env::var("HOME").unwrap());
 
@@ -296,10 +295,9 @@ pub fn setup_ohmyzsh() -> Result<String, std::io::Error> {
     Ok("ohmyzsh setup successfully".to_string())
 }
 
-// TODO move setup logic into separate function.
+// TODO: Check if it's already installed.
 pub fn install_zshsyntax() -> Result<String, std::io::Error> {
-    println!("Step 7. ZshSyntaxHighlighting");
-    println!("Checking if ZshSyntaxHighlighting is installed...");
+    println!("step #. install zsh-syntax-highlighting");
 
     let install_output = Command::new("brew")
         .arg("install")
@@ -317,6 +315,7 @@ pub fn install_zshsyntax() -> Result<String, std::io::Error> {
 }
 
 pub fn setup_zshsyntax() -> Result<String, std::io::Error> {
+    println!("step #. setup zsh-syntax-highlighting");
     let src_directory = format!(
         "{}/workspace-configs/zsh-syntax-highlighting",
         std::env::var("HOME").unwrap()
@@ -345,9 +344,9 @@ pub fn setup_zshsyntax() -> Result<String, std::io::Error> {
     Ok("zsh-syntax-highlighting setup successfully".to_string())
 }
 
+// TODO: Check if it's already installed.
 pub fn install_zshautosuggestions() -> Result<String, std::io::Error> {
-    println!("Step 7. ZshAutoSuggestions");
-    println!("Checking if ZshAutoSuggestions is installed...");
+    println!("step #. install zsh-auto-suggestions");
 
     let install_output = Command::new("brew")
         .arg("install")
@@ -365,8 +364,7 @@ pub fn install_zshautosuggestions() -> Result<String, std::io::Error> {
 }
 
 pub fn install_powerlevel10k() -> Result<String, std::io::Error> {
-    println!("Step 8. Powerlevel10k");
-    println!("Checking if Powerlevel10k is installed...");
+    println!("step #. install powerlevel10k");
 
     let check_output = Command::new("ls")
         .arg(format!(
@@ -402,6 +400,7 @@ pub fn install_powerlevel10k() -> Result<String, std::io::Error> {
 }
 
 pub fn setup_powerlevel10k() -> Result<String, std::io::Error> {
+    println!("step #. setup powerlevel10k");
     let src_directory = format!(
         "{}/workspace-configs/powerlevel10k",
         std::env::var("HOME").unwrap()
@@ -421,10 +420,9 @@ pub fn setup_powerlevel10k() -> Result<String, std::io::Error> {
 }
 
 pub fn install_fzf() -> Result<String, std::io::Error> {
-    println!("Step 9. FuzzyFinder");
-    println!("Checking if FuzzyFinder is installed...");
+    println!("step #. install fuzzyfinder");
 
-    let check_output = Command::new("fzf").output()?;
+    let check_output = Command::new("fzf").arg("--version").output()?;
 
     if check_output.status.success() {
         return Ok("fuzzyfinder is already installed".to_string());
@@ -444,8 +442,7 @@ pub fn install_fzf() -> Result<String, std::io::Error> {
 }
 
 pub fn install_neovim() -> Result<String, std::io::Error> {
-    println!("Step 10. Neovim");
-    println!("Checking if Neovim is installed...");
+    println!("step #. install neovim");
 
     let check_output = Command::new("nvim").arg("-v").output()?;
 
@@ -467,7 +464,7 @@ pub fn install_neovim() -> Result<String, std::io::Error> {
 }
 
 pub fn setup_neovim() -> Result<String, std::io::Error> {
-    println!("Step 10. Setup Neovim");
+    println!("step #. setup neovim");
 
     let check_output = Command::new("git")
         .args([
@@ -478,9 +475,11 @@ pub fn setup_neovim() -> Result<String, std::io::Error> {
         .output()?;
 
     if !check_output.status.success() {
+        // TODO: Fix this logic as it can crash not only
+        // because of existing neovim config.
         return Err(std::io::Error::new(
             std::io::ErrorKind::Other,
-            "failed to install fzf",
+            "there is already available config located at ~/.config/nvim, please backup it and try again",
         ));
     }
 

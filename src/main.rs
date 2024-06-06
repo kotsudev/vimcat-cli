@@ -34,4 +34,6 @@ fn main() {
     for step_fn in steps {
         run_step(*step_fn);
     }
+
+    println!("vimcat has been installed successfully.");
 }
