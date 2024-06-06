@@ -17,6 +17,7 @@ fn main() {
         install_iterm,
         setup_iterm,
         install_tmux,
+        install_tpm,
         setup_tmux,
         install_ohmyzsh,
         setup_ohmyzsh,

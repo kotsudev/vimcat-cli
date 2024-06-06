@@ -210,10 +210,22 @@ pub fn install_tmux() -> Result<String, std::io::Error> {
     Ok("tmux installed successfully".to_string())
 }
 
-pub fn setup_tmux() -> Result<String, std::io::Error> {
-    println!("Step 4. Setup Tmux");
+pub fn install_tpm() -> Result<String, std::io::Error> {
+    println!("step #. install tmux plugin manager");
 
-    let check_output = Command::new("git")
+    let check_output = Command::new("ls")
+        .arg(format!(
+            "{}/.tmux/plugins/tpm",
+            std::env::var("HOME").unwrap()
+        ))
+        .output()?;
+
+    if check_output.status.success() {
+        return Ok("tmux plugin manager is already installed".to_string());
+    }
+
+    println!("tpm is not installed. installing...");
+    let install_output = Command::new("git")
         .args([
             "clone",
             "https://github.com/tmux-plugins/tpm",
