@@ -1,4 +1,3 @@
-use crate::keys::*;
 use crate::utils::*;
 use std::path::Path;
 use std::process::Command;
@@ -8,7 +7,7 @@ pub fn download_configs() -> Result<String, std::io::Error> {
     const REPO_URL: &str = "https://github.com/kotsudev/workspace-configs.git";
     let src_directory = format!("{}/workspace-configs", std::env::var("HOME").unwrap());
 
-    println!("{}", Keys::InstallConfigs.as_str());
+    println!("step #. download configs");
 
     if !Path::new(&src_directory).exists() {
         println!("destination path is not found, creating...");
@@ -26,14 +25,14 @@ pub fn download_configs() -> Result<String, std::io::Error> {
         ));
     };
 
-    Ok(Keys::InstallConfigs.as_str().to_string())
+    Ok("download configs".to_string())
 }
 
 pub fn cleanup_configs() -> Result<String, std::io::Error> {
     let src_directory = format!("{}/workspace-configs", std::env::var("HOME").unwrap());
     let dest_path = Path::new(&src_directory);
 
-    println!("{}", Keys::RemoveConfigs.as_str());
+    println!("step #. cleanup configs");
 
     if !dest_path.exists() {
         return Err(std::io::Error::new(
@@ -43,7 +42,7 @@ pub fn cleanup_configs() -> Result<String, std::io::Error> {
     }
 
     std::fs::remove_dir_all(dest_path)?;
-    Ok(Keys::RemoveConfigs.as_str().to_string())
+    Ok("cleanup configs".to_string())
 }
 
 pub fn install_homebrew() -> Result<String, std::io::Error> {
@@ -52,10 +51,7 @@ pub fn install_homebrew() -> Result<String, std::io::Error> {
     println!("Checking if Homebrew is installed...");
 
     if check_output.status.success() {
-        return Ok(format!(
-            "{} skipped, homebrew is already installed",
-            Keys::InstallHomebrew.as_str()
-        ));
+        return Ok("homebrew is already installed".to_string());
     }
 
     println!("Homebrew is not installed. Installing...");
@@ -81,10 +77,7 @@ pub fn install_git() -> Result<String, std::io::Error> {
     let check_output = Command::new("git").arg("-v").output()?;
 
     if check_output.status.success() {
-        return Ok(format!(
-            "{}, is already installed",
-            Keys::InstallGit.as_str()
-        ));
+        return Ok("git is already installed".to_string());
     }
 
     println!("Git is not installed. Installing...");
@@ -112,10 +105,7 @@ pub fn install_nerdfonts() -> Result<String, std::io::Error> {
         .output()?;
 
     if check_output.status.success() {
-        return Ok(format!(
-            "{}, is already installed",
-            Keys::InstallNerdfonts.as_str()
-        ));
+        return Ok("nerdfonts is already installed".to_string());
     }
 
     println!("NerdFonts is not installed. Installing...");
@@ -153,10 +143,7 @@ pub fn install_iterm() -> Result<String, std::io::Error> {
     let check_output = Command::new("ls").arg("/Applications/iTerm.app").output()?;
 
     if check_output.status.success() {
-        return Ok(format!(
-            "{}, is already installed",
-            Keys::InstallIterm.as_str()
-        ));
+        return Ok("iterm, is already installed".to_string());
     }
 
     println!("Iterm is not installed. Installing...");
@@ -207,10 +194,7 @@ pub fn install_tmux() -> Result<String, std::io::Error> {
     let check_output = Command::new("tmux").arg("-V").output()?;
 
     if check_output.status.success() {
-        return Ok(format!(
-            "{}, is already installed",
-            Keys::InstallTmux.as_str()
-        ));
+        return Ok("tmux is already installed".to_string());
     }
 
     println!("Tmux is not installed. Installing...");
@@ -269,10 +253,7 @@ pub fn install_ohmyzsh() -> Result<String, std::io::Error> {
         .output()?;
 
     if check_output.status.success() {
-        return Ok(format!(
-            "{}, is already installed",
-            Keys::InstallOhmyzsh.as_str()
-        ));
+        return Ok("ohmyzsh is already installed".to_string());
     }
 
     println!("ohmyzsh is not installed. Installing...");
@@ -386,10 +367,7 @@ pub fn install_powerlevel10k() -> Result<String, std::io::Error> {
         .output()?;
 
     if check_output.status.success() {
-        return Ok(format!(
-            "{}, is already installed",
-            Keys::InstallPowerlevel10k.as_str()
-        ));
+        return Ok("powerlevel10k is already installed".to_string());
     }
 
     let check_output = Command::new("git")
@@ -440,10 +418,7 @@ pub fn install_fzf() -> Result<String, std::io::Error> {
     let check_output = Command::new("fzf").output()?;
 
     if check_output.status.success() {
-        return Ok(format!(
-            "{}, is already installed",
-            Keys::InstallFzf.as_str()
-        ));
+        return Ok("fuzzyfinder is already installed".to_string());
     }
 
     println!("Fzf is not installed. Installing...");
@@ -466,10 +441,7 @@ pub fn install_neovim() -> Result<String, std::io::Error> {
     let check_output = Command::new("nvim").arg("-v").output()?;
 
     if check_output.status.success() {
-        return Ok(format!(
-            "{}, is already installed",
-            Keys::InstallNeovim.as_str()
-        ));
+        return Ok("neovim is already installed".to_string());
     }
 
     println!("neovim is not installed. Installing...");

@@ -1,5 +1,4 @@
 mod installer;
-mod keys;
 mod utils;
 
 use installer::*;
