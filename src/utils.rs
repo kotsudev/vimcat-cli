@@ -1,31 +1,18 @@
-use std::io;
+use color_eyre::{eyre::bail, Result};
 use std::path::Path;
+use std::process::Command;
+use std::process::ExitStatus;
+use std::process::Stdio;
 
-pub struct CopyResult {
-    pub success: bool,
-}
-
-impl CopyResult {
-    pub fn success(&self) -> bool {
-        self.success
-    }
-}
-
-pub fn copy(src: &str, dest: &str, file: &str) -> io::Result<CopyResult> {
+pub fn copy(src: &str, dest: &str, file: &str) -> Result<()> {
     let src_path = Path::new(src);
     if !src_path.exists() || !src_path.is_dir() {
-        return Err(io::Error::new(
-            io::ErrorKind::NotFound,
-            "Source directory not found",
-        ));
+        bail!("copy error: source directory not found");
     }
 
     let dest_path = Path::new(dest);
     if !dest_path.exists() || !dest_path.is_dir() {
-        return Err(io::Error::new(
-            io::ErrorKind::NotFound,
-            "Destination directory not found",
-        ));
+        bail!("copy error: destination directory not found");
     }
 
     let src_file = src_path.join(file);
@@ -33,12 +20,22 @@ pub fn copy(src: &str, dest: &str, file: &str) -> io::Result<CopyResult> {
 
     std::fs::copy(src_file, dest_file)?;
 
-    Ok(CopyResult { success: true })
+    Ok(())
 }
 
-pub fn run_step(step_fn: fn() -> Result<String, std::io::Error>) {
-    match step_fn() {
-        Ok(r) => println!("Success: {}", r),
-        Err(e) => panic!("Error: {}", e),
-    }
+pub fn executec(command: &str, args: &[&str]) -> Result<ExitStatus> {
+    let status = Command::new(command)
+        .args(args)
+        .stdout(Stdio::null())
+        .stderr(Stdio::null())
+        .status()?;
+
+    if !status.success() {
+        bail!(format!(
+            "failed to execute command: {}, with args: {:?}",
+            command, args
+        ));
+    };
+
+    Ok(status)
 }
