@@ -1,105 +1,20 @@
 mod errors;
 mod installer;
-mod step;
-mod tui;
 mod utils;
 
 use installer::*;
 
+use color_eyre::eyre::WrapErr;
 use color_eyre::Result;
-use crossterm::event::{self, Event, KeyCode, KeyEvent, KeyEventKind};
-use ratatui::{
-    prelude::*,
-    symbols::border,
-    widgets::{block::*, *},
-};
+use std::thread::sleep;
+use std::time::Duration;
+
+type Step = fn() -> Result<()>;
 
 fn main() -> Result<()> {
     errors::install_hooks()?;
-    let mut terminal = tui::init()?;
-    App::default().run(&mut terminal)?;
-    tui::restore()?;
-    Ok(())
-}
 
-#[derive(Debug, Default)]
-pub struct App {
-    exit: bool,
-}
-
-impl App {
-    pub fn run(&mut self, terminal: &mut tui::Tui) -> Result<()> {
-        while !self.exit {
-            terminal.draw(|frame| self.render_frame(frame))?;
-            self.handle_events()?;
-        }
-        Ok(())
-    }
-
-    fn render_frame(&self, frame: &mut Frame) {
-        frame.render_widget(self, frame.size());
-    }
-
-    fn handle_events(&mut self) -> Result<()> {
-        match event::read()? {
-            Event::Key(key_event) if key_event.kind == KeyEventKind::Press => {
-                self.handle_key_event(key_event)
-            }
-            _ => Ok(()),
-        }
-    }
-
-    fn handle_key_event(&mut self, key_event: KeyEvent) -> Result<()> {
-        match key_event.code {
-            KeyCode::Char('q') => self.exit()?,
-            KeyCode::Char('i') => install_vimcat()?,
-            _ => {}
-        }
-        Ok(())
-    }
-
-    fn exit(&mut self) -> Result<()> {
-        self.exit = true;
-        Ok(())
-    }
-}
-
-impl Widget for &App {
-    fn render(self, area: Rect, buf: &mut Buffer) {
-        let title = Title::from(" Vimcat CLI ".bold());
-        let instructions = Title::from(Line::from(vec![
-            " Install ".into(),
-            "<I>".blue().bold(),
-            " Quit ".into(),
-            "<Q>".blue().bold(),
-        ]));
-        let block = Block::default()
-            .title(title.alignment(Alignment::Center))
-            .title(
-                instructions
-                    .alignment(Alignment::Center)
-                    .position(Position::Bottom),
-            )
-            .borders(Borders::ALL)
-            .border_set(border::THICK);
-
-        let text = Text::from(vec![Line::from(vec![
-            "Welcome to vimcat cli".into(),
-            step::get_current_name()
-                .unwrap_or("unknown step".to_string())
-                .white(),
-            step::get_id().to_string().yellow(),
-        ])]);
-
-        Paragraph::new(text)
-            .centered()
-            .block(block)
-            .render(area, buf);
-    }
-}
-
-fn install_vimcat() -> Result<()> {
-    let steps: &[(&str, fn() -> Result<()>)] = &[
+    let steps: &[(&str, Step)] = &[
         ("cleanning configs", cleanup_configs),
         ("download configs", download_configs),
         ("installing homebrew", install_homebrew),
@@ -123,56 +38,17 @@ fn install_vimcat() -> Result<()> {
         ("cleanning configs", cleanup_configs),
     ];
 
-    for (step_name, step_fn) in steps {
-        step::run_step(step_name.to_string(), *step_fn)?;
+    for (step_number, (step_name, step_fn)) in steps.iter().enumerate() {
+        println!("step {}: {}", step_number, step_name);
+        step_fn().wrap_err(format!("step: {}", step_name))?;
+        sleep(Duration::from_millis(1000));
     }
+
+    println!("vimcat has been installed successfully!");
+    println!(
+        "to finish the installation open tmux inside iterm and press prefix + I, 
+        this will install all configured plugins"
+    );
 
     Ok(())
-}
-
-#[cfg(test)]
-mod tests {
-    // ANCHOR: render test
-    use super::*;
-
-    #[test]
-    fn render() {
-        let app = App::default();
-        let mut buf = Buffer::empty(Rect::new(0, 0, 50, 4));
-
-        app.render(buf.area, &mut buf);
-
-        let mut expected = Buffer::with_lines(vec![
-            "┏━━━━━━━━━━━━━ Counter App Tutorial ━━━━━━━━━━━━━┓",
-            "┃                  Vimcat CLI                    ┃",
-            "┃                                                ┃",
-            "┗━ Decrement <Left> Increment <Right> Quit <Q> ━━┛",
-        ]);
-        let title_style = Style::new().bold();
-        let counter_style = Style::new().yellow();
-        let key_style = Style::new().blue().bold();
-        expected.set_style(Rect::new(14, 0, 22, 1), title_style);
-        expected.set_style(Rect::new(28, 1, 1, 1), counter_style);
-        expected.set_style(Rect::new(13, 3, 6, 1), key_style);
-        expected.set_style(Rect::new(30, 3, 7, 1), key_style);
-        expected.set_style(Rect::new(43, 3, 4, 1), key_style);
-
-        assert_eq!(buf, expected);
-    }
-
-    #[test]
-    fn handle_key_event() -> io::Result<()> {
-        let mut app = App::default();
-        app.handle_key_event(KeyCode::Right.into());
-        assert_eq!(app.counter, 1);
-
-        app.handle_key_event(KeyCode::Left.into());
-        assert_eq!(app.counter, 0);
-
-        let mut app = App::default();
-        app.handle_key_event(KeyCode::Char('q').into());
-        assert_eq!(app.exit, true);
-
-        Ok(())
-    }
 }
