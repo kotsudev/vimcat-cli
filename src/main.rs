@@ -49,6 +49,7 @@ fn main() -> Result<()> {
         "to finish the installation open tmux inside iterm and press prefix + I, 
         this will install all configured plugins"
     );
+    println!("tip: to apply updated tmux config use `tmux source ~/.tmux.conf`");
 
     Ok(())
 }
