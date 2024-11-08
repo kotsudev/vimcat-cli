@@ -24,7 +24,6 @@ fn main() -> Result<()> {
         ("installing iterm", install_iterm),
         ("setting up item", setup_iterm),
         ("installing tmux", install_tmux),
-        ("installing tpm", install_tpm),
         ("setting up tmux", setup_tmux),
         ("installing ohmyzsh", install_ohmyzsh),
         ("setting up ohmyzsh", setup_ohmyzsh),

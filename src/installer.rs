@@ -116,26 +116,6 @@ pub fn install_tmux() -> Result<()> {
     Ok(())
 }
 
-pub fn install_tpm() -> Result<()> {
-    let tpm_directory = format!("{}/.tmux/plugins/tpm", std::env::var("HOME").unwrap());
-    let check_output = executec("ls", &[&tpm_directory])?;
-
-    if check_output.success() {
-        return Ok(());
-    }
-
-    executec(
-        "git",
-        &[
-            "clone",
-            "https://github.com/tmux-plugins/tpm",
-            &tpm_directory,
-        ],
-    )?;
-
-    Ok(())
-}
-
 pub fn setup_tmux() -> Result<()> {
     let src_directory = format!("{}/workspace-configs/tmux", std::env::var("HOME").unwrap());
     let dest_directory = format!("{}/", std::env::var("HOME").unwrap());
