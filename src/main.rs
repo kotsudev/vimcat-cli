@@ -45,10 +45,10 @@ fn main() -> Result<()> {
 
     println!("vimcat has been installed successfully!");
     println!(
-        "to finish the installation open tmux inside iterm and press prefix + I, 
+        "to finish the installation open tmux inside iterm and press `ctrl + x + I`, 
         this will install all configured plugins"
     );
-    println!("tip: to apply updated tmux config use `tmux source ~/.tmux.conf`");
+    println!("tip: to apply updated tmux config use `ctrl + x + r`");
 
     Ok(())
 }
