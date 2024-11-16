@@ -30,36 +30,6 @@ pub fn cleanup_configs() -> Result<()> {
     Ok(())
 }
 
-pub fn install_homebrew() -> Result<()> {
-    let check_status = executec("brew", &["--version"])?;
-
-    if check_status.success() {
-        return Ok(());
-    }
-
-    executec(
-        "/bin/bash",
-        &[
-            "-c",
-            r#"$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"#,
-        ],
-    )?;
-
-    Ok(())
-}
-
-pub fn install_git() -> Result<()> {
-    let check_status = executec("git", &["-v"])?;
-
-    if check_status.success() {
-        return Ok(());
-    }
-
-    executec("brew", &["install", "git"])?;
-
-    Ok(())
-}
-
 pub fn install_nerdfonts() -> Result<()> {
     let fc_list_output = Command::new("fc-list").stdout(Stdio::piped()).spawn()?;
     let check_output = Command::new("grep")
