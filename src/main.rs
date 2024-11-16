@@ -17,8 +17,6 @@ fn main() -> Result<()> {
     let steps: &[(&str, Step)] = &[
         ("cleanning configs", cleanup_configs),
         ("download configs", download_configs),
-        ("installing homebrew", install_homebrew),
-        ("installing git", install_git),
         ("installing fzf", install_fzf),
         ("installing nerdfonts", install_nerdfonts),
         ("installing iterm", install_iterm),

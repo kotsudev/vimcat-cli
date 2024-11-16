@@ -1,8 +1,6 @@
 use crate::utils::*;
 use color_eyre::{eyre::bail, Result};
 use std::path::Path;
-use std::process::Command;
-use std::process::Stdio;
 
 pub fn download_configs() -> Result<()> {
     const REPO_URL: &str = "https://github.com/kotsudev/workspace-configs.git";
@@ -30,60 +28,13 @@ pub fn cleanup_configs() -> Result<()> {
     Ok(())
 }
 
-pub fn install_homebrew() -> Result<()> {
-    let check_status = executec("brew", &["--version"])?;
-
-    if check_status.success() {
-        return Ok(());
-    }
-
-    executec(
-        "/bin/bash",
-        &[
-            "-c",
-            r#"$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"#,
-        ],
-    )?;
-
-    Ok(())
-}
-
-pub fn install_git() -> Result<()> {
-    let check_status = executec("git", &["-v"])?;
-
-    if check_status.success() {
-        return Ok(());
-    }
-
-    executec("brew", &["install", "git"])?;
-
-    Ok(())
-}
-
 pub fn install_nerdfonts() -> Result<()> {
-    let fc_list_output = Command::new("fc-list").stdout(Stdio::piped()).spawn()?;
-    let check_output = Command::new("grep")
-        .arg("JetBrainsMono Nerd Font")
-        .stdin(fc_list_output.stdout.unwrap())
-        .output()?;
-
-    if check_output.status.success() {
-        return Ok(());
-    }
-
-    executec("brew", &["tap", "homebrew/cask-fonts"])?;
     executec("brew", &["install", "font-jetbrains-mono-nerd-font"])?;
 
     Ok(())
 }
 
 pub fn install_iterm() -> Result<()> {
-    let check_output = executec("ls", &["/Applications/iTerm.app"])?;
-
-    if check_output.success() {
-        return Ok(());
-    }
-
     executec("brew", &["install", "--cask", "iterm2"])?;
 
     Ok(())
@@ -105,14 +56,7 @@ pub fn setup_iterm() -> Result<()> {
 }
 
 pub fn install_tmux() -> Result<()> {
-    let check_output = executec("tmux", &["-V"])?;
-
-    if check_output.success() {
-        return Ok(());
-    }
-
     executec("brew", &["install", "tmux"])?;
-
     Ok(())
 }
 
@@ -150,10 +94,8 @@ pub fn setup_ohmyzsh() -> Result<()> {
     Ok(())
 }
 
-// TODO: Check if it's already installed.
 pub fn install_zshsyntax() -> Result<()> {
     executec("brew", &["install", "zsh-syntax-highlighting"])?;
-
     Ok(())
 }
 
@@ -178,10 +120,8 @@ pub fn setup_zshsyntax() -> Result<()> {
     Ok(())
 }
 
-// TODO: Check if it's already installed.
 pub fn install_zshautosuggestions() -> Result<()> {
     executec("brew", &["install", "zsh-autosuggestions"])?;
-
     Ok(())
 }
 
@@ -222,26 +162,12 @@ pub fn setup_powerlevel10k() -> Result<()> {
 }
 
 pub fn install_fzf() -> Result<()> {
-    let check_output = executec("fzf", &["--version"])?;
-
-    if check_output.success() {
-        return Ok(());
-    }
-
     executec("brew", &["install", "fzf"])?;
-
     Ok(())
 }
 
 pub fn install_neovim() -> Result<()> {
-    let check_output = executec("nvim", &["-v"])?;
-
-    if check_output.success() {
-        return Ok(());
-    }
-
     executec("brew", &["install", "neovim"])?;
-
     Ok(())
 }
 
